@@ -18,8 +18,8 @@ export default function ajax({ url, method = "get", data = null }) {
       headers,
       baseURL:
         process.env.NODE_ENV === "development"
-          ? "https://vue-course-api.hexschool.io/api/poseidoncode/"
-          : "https://vue-course-api.hexschool.io/api/poseidoncode/",
+          ? "https://data.cdc.gov.tw/api/3/"
+          : "https://data.cdc.gov.tw/api/3/",
 
       timeout: 8000,
     });

@@ -1,7 +1,7 @@
 <template>
   <section class="main-section px-3">
     <section class="search-block">
-      <h5 class="big-title">產品管理</h5>
+      <h5 class="big-title">公費COVID-19家用快篩試劑社區定點診所名單</h5>
       <div class="p-2 search-section">
         <div class="p-inputgroup">
           <span class="p-inputgroup-addon">啟用狀態</span>
@@ -152,155 +152,6 @@
       ></Paginator>
       <div class="mt-4">共{{ totalItemsCount }}筆</div>
     </footer>
-
-    <!-- //EditModal -->
-    <Dialog
-      v-model:visible="editModal"
-      style="width: 85vw"
-      :draggable="false"
-      :modal="true"
-      class="custom-modal"
-    >
-      <template #header>
-        <h3>
-          {{
-            nowType == 1 ? "新增產品" : nowType == 2 ? "編輯產品" : "刪除產品"
-          }}
-        </h3>
-      </template>
-      <section class="modal-main-content">
-        <!-- {{ modalItem }} -->
-        <h2 v-if="nowType == 3" class="mb-2 font-black text-xl">
-          是否確定要刪除此產品?
-        </h2>
-        <div class="p-inputgroup mt-2 col-span-full">
-          <span class="p-inputgroup-addon red-star">標題</span>
-          <InputText
-            type="text"
-            v-model.trim="modalItem.title"
-            :disabled="nowType == 3"
-            class="custom-search"
-          />
-        </div>
-        <div class="p-inputgroup mt-2 col-span-full">
-          <span class="p-inputgroup-addon red-star">描述</span>
-          <Textarea
-            v-model.trim="modalItem.description"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-        <div class="p-inputgroup mt-2 col-span-full">
-          <span class="p-inputgroup-addon red-star">說明</span>
-          <Textarea
-            v-model.trim="modalItem.content"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-        <div class="p-inputgroup mt-2">
-          <span class="p-inputgroup-addon red-star">分類</span>
-          <InputText
-            v-model.trim="modalItem.category"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-        <div class="p-inputgroup mt-2">
-          <span class="p-inputgroup-addon red-star">單位</span>
-          <InputText
-            v-model.trim="modalItem.unit"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-        <div class="p-inputgroup mt-2">
-          <span class="p-inputgroup-addon red-star">原價</span>
-          <InputText
-            type="Number"
-            v-model.trim="modalItem.origin_price"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-
-        <div class="p-inputgroup mt-2">
-          <span class="p-inputgroup-addon red-star">售價</span>
-          <InputText
-            type="Number"
-            v-model.trim="modalItem.price"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-        <div class="p-inputgroup mt-2">
-          <span class="p-inputgroup-addon">主圖網址</span>
-          <InputText
-            v-model.trim="modalItem.imagesArr[0].url"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-        <div
-          class="p-inputgroup mt-2"
-          v-for="(item, i) in modalItem.imagesArr.slice(1)"
-          :key="`headers${i}`"
-        >
-          <span class="p-inputgroup-addon">輸入圖片網址 {{ i + 1 }}</span>
-
-          <InputText
-            v-model="item.url"
-            class="custom-search"
-            :disabled="nowType == 3"
-          />
-        </div>
-
-        <div class="p-inputgroup mt-2">
-          <span class="p-inputgroup-addon">是否啟用</span>
-          <Checkbox
-            style="margin: 12px 0 0 10px"
-            :binary="true"
-            v-model="modalItem.is_enabled"
-            @change="setStatus(item)"
-          />
-        </div>
-
-        <div class="col-span-full flex justify-center mt-2">
-          <Galleria
-            :circular="true"
-            :showItemNavigators="true"
-            :value="modalItem.imagesArr"
-            :responsiveOptions="responsiveOptions"
-            :numVisible="6"
-            containerStyle="max-width: 640px"
-            :showThumbnails="false"
-            :showIndicators="true"
-          >
-            <template #item="slotProps">
-              <img
-                :src="slotProps.item.url"
-                style="width: 100%; display: block"
-                :title="slotProps.item.index"
-                v-if="!!slotProps.item.url"
-              />
-              <div
-                v-else
-                style="width: 500px; height: 310px; border: 1px solid #e1e0e0"
-              ></div>
-            </template>
-          </Galleria>
-        </div>
-      </section>
-
-      <template #footer>
-        <Button label="確定" @click="saveEditModal" />
-        <Button
-          label="取消"
-          class="p-button-success"
-          @click="editModal = false"
-        />
-      </template>
-    </Dialog>
   </section>
 </template>
 
@@ -308,12 +159,7 @@
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { useToast } from "vue-toastification";
 
-import {
-  getProducts,
-  postProducts,
-  deleteProducts,
-  putProducts,
-} from "Service/apis.js";
+import { getMapLists } from "Service/apis.js";
 
 export default defineComponent({
   name: "function",
@@ -370,7 +216,7 @@ export default defineComponent({
 
         //top:筆數、skip:跳過幾筆
 
-        const res = await getProducts(`${qs}`);
+        const res = await getMapLists(`${qs}`);
 
         console.log("res", res);
         // let { Items, Count } = res.data;

@@ -4,30 +4,7 @@ import store from "../store";
 
 // import dayjs from "dayjs";
 
-export const getProducts = (qs = "") => ajax({ url: "admin/products" + qs });
-
-export const postProducts = (data) =>
+export const getMapLists = (qs = "") =>
   ajax({
-    url: "admin/product",
-    method: "post",
-    data,
+    url: "action/datastore_search?resource_id=aff77243-8104-46a4-92c9-046bccca6941&limit=50",
   });
-
-export const deleteProducts = (id) =>
-  ajax({
-    url: `admin/product/${id}`,
-    method: "delete",
-  });
-
-export const putProducts = (data, id) =>
-  ajax({
-    url: `admin/product/${id}`,
-    method: "put",
-    data,
-  });
-
-// (data) =>
-//   ajax({
-//     url: `admin/products/${data.id}`,
-//     method: "put",
-//   });
