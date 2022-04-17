@@ -211,7 +211,6 @@ export default defineComponent({
 
         arrData.unshift({ text: "全部", value: null });
         zones.value = arrData;
-        console.log("arrData", arrData);
       } else {
         zones.value = null;
       }
