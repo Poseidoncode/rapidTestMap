@@ -7,10 +7,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.6.1",
     "axios": "^0.24.0",
     "chart.js": "^3.6.0",
     "dayjs": "^1.10.7",
     "gsap": "^3.8.0",
+    "leaflet": "^1.7.1",
     "mitt": "^3.0.0",
     "primeicons": "^5.0.0",
     "primevue": "^3.12.0",

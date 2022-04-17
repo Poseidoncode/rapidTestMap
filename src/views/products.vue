@@ -1,5 +1,75 @@
 <template>
-  <section class="main-section px-3">
+  <sidebar></sidebar>
+  <div style="height: 100vh; width: 100vw">
+    <l-map
+      v-model="zoom"
+      v-model:zoom="zoom"
+      :center="[25.053065384952, 121.59537159907072]"
+      @move="log('move')"
+    >
+      <l-tile-layer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ></l-tile-layer>
+      <l-control-layers />
+      <l-marker
+        :lat-lng="[25.06752703436326, 121.57563054124498]"
+        draggable
+        @moveend="log('moveend')"
+      >
+        <l-tooltip> lol </l-tooltip>
+      </l-marker>
+
+      <!-- <l-marker :lat-lng="[47.41322, -1.219482]">
+        <l-icon :icon-url="iconUrl" :icon-size="iconSize" />
+      </l-marker>
+
+      <l-marker :lat-lng="[50, 50]" @moveend="log('moveend')">
+        <l-popup> lol </l-popup>
+      </l-marker>
+
+      <l-polyline
+        :lat-lngs="[
+          [47.334852, -1.509485],
+          [47.342596, -1.328731],
+          [47.241487, -1.190568],
+          [47.234787, -1.358337],
+        ]"
+        color="green"
+      ></l-polyline>
+      <l-polygon
+        :lat-lngs="[
+          [46.334852, -1.509485],
+          [46.342596, -1.328731],
+          [46.241487, -1.190568],
+          [46.234787, -1.358337],
+        ]"
+        color="#41b782"
+        :fill="true"
+        :fillOpacity="0.5"
+        fillColor="#41b782"
+      />
+      <l-rectangle
+        :lat-lngs="[
+          [46.334852, -1.509485],
+          [46.342596, -1.328731],
+          [46.241487, -1.190568],
+          [46.234787, -1.358337],
+        ]"
+        :fill="true"
+        color="#35495d"
+      />
+      <l-rectangle
+        :bounds="[
+          [46.334852, -1.190568],
+          [46.241487, -1.090357],
+        ]"
+      >
+        <l-popup> lol </l-popup>
+      </l-rectangle> -->
+    </l-map>
+    <!-- <button @click="changeIcon">New kitten icon</button> -->
+  </div>
+  <!-- <section class="main-section px-3">
     <section class="search-block">
       <h5 class="big-title">公費COVID-19家用快篩試劑社區定點診所名單</h5>
       <div class="p-2 search-section">
@@ -111,19 +181,67 @@
       ></Paginator>
       <div class="mt-4">共{{ totalItemsCount }}筆</div>
     </footer>
-  </section>
+  </section> -->
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, watch } from "vue";
+import { defineComponent, ref, onMounted, watch, computed } from "vue";
 import { useToast } from "vue-toastification";
 import { citiesData, zonesData } from "@/utils/constant.js";
 import { getMapLists } from "Service/apis.js";
+import sidebar from "./sidebar.vue";
+import {
+  LMap,
+  LIcon,
+  LTileLayer,
+  LMarker,
+  LControlLayers,
+  LTooltip,
+  LPopup,
+  LPolyline,
+  LPolygon,
+  LRectangle,
+} from "@vue-leaflet/vue-leaflet";
+import "leaflet/dist/leaflet.css";
 
 export default defineComponent({
   name: "function",
-  components: {},
+  components: {
+    LMap,
+    LIcon,
+    LTileLayer,
+    LMarker,
+    LControlLayers,
+    LTooltip,
+    LPopup,
+    LPolyline,
+    LPolygon,
+    LRectangle,
+    sidebar,
+  },
   setup() {
+    //map
+
+    const zoom = ref(14);
+    const iconWidth = ref(25);
+    const iconHeight = ref(40);
+    const iconUrl = computed(() => {
+      return `https://placekitten.com/${iconWidth.value}/${iconHeight.value}`;
+    });
+    const iconSize = computed(() => {
+      return [iconWidth.value, iconHeight.value];
+    });
+
+    const log = (a) => {
+      console.log(a);
+    };
+    const changeIcon = (a) => {
+      iconWidth.value += 2;
+      if (iconWidth.value > iconHeight.value) {
+        iconWidth.value = Math.floor(iconHeight.value / 2);
+      }
+    };
+
     //-----------ListData----------------
     //for list
     const headers = ref([
@@ -267,6 +385,14 @@ export default defineComponent({
       selectedClinic,
 
       clearSearch,
+
+      zoom,
+      iconWidth,
+      iconHeight,
+      iconUrl,
+      iconSize,
+      log,
+      changeIcon,
     };
   },
 });
