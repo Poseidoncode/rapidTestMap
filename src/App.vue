@@ -14,6 +14,5 @@ export default {
 <style lang="scss">
 @import "./styles/main.scss";
 .content {
-  margin-top: 160px;
 }
 </style>
