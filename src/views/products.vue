@@ -4,37 +4,39 @@
       <h5 class="big-title">公費COVID-19家用快篩試劑社區定點診所名單</h5>
       <div class="p-2 search-section">
         <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">啟用狀態</span>
-          <div
-            v-for="item of activates"
-            :key="item.text"
-            class="p-field-radiobutton mr-3 mt-2"
-          >
-            <RadioButton
-              :id="item.text"
-              name="item"
-              :value="item.value"
-              v-model="selectedActivate"
-              @change="getData"
-            />
-            <label :for="item.text">{{ item.text }}</label>
-          </div>
-        </div>
-        <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">產品代碼</span>
-          <InputText
-            type="text"
-            v-model="selectedNo"
-            @keydown.enter="getData"
-            class="custom-search"
+          <span class="p-inputgroup-addon">縣市別</span>
+
+          <Dropdown
+            v-model="selectedCity"
+            :options="citiesData"
+            placeholder="請選擇..."
+            style="padding-top: 5px"
+            optionLabel="text"
+            optionValue="value"
+            class="custom-height"
+            @change="setZones"
           />
         </div>
         <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">產品名稱</span>
+          <span class="p-inputgroup-addon">鄉鎮市區別</span>
+
+          <Dropdown
+            v-model="selectedZone"
+            :options="zones"
+            placeholder="請選擇..."
+            style="padding-top: 5px"
+            optionLabel="text"
+            optionValue="value"
+            class="custom-height"
+            @change="filterItems"
+          />
+        </div>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">診所名稱</span>
           <InputText
             type="text"
-            v-model="selectedName"
-            @keydown.enter="getData"
+            v-model="selectedClinic"
+            @keydown.enter="filterItems"
             class="custom-search"
           />
         </div>
@@ -53,14 +55,6 @@
           @click="clearSearch"
         >
           清除
-        </button>
-        <button
-          class="text-gray-700 font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none custom-search"
-          type="button"
-          style="background: #f9be4a"
-          @click="showEditModal(1)"
-        >
-          +新增產品
         </button>
       </div>
     </section>
@@ -86,54 +80,19 @@
           class="text-white font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-2 mb-1 text-sm"
           type="button"
           style="background: #0d4a9e"
-          @click="showEditModal(2, item)"
         >
-          編輯
-        </button>
-        <button
-          class="text-white font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 text-sm"
-          type="button"
-          style="background: #218be1"
-          @click="showEditModal(3, item)"
-        >
-          刪除
+          地圖
         </button>
       </div>
 
-      <div class="content" :title="item.title">
-        {{ item.title || "" }}
+      <div class="content" :title="item.縣市別">
+        {{ item?.縣市別 || "" }}
       </div>
-      <div class="content" :title="item.description">
-        {{ item.description || "" }}
+      <div class="content" :title="item.鄉鎮市區別">
+        {{ item?.鄉鎮市區別 || "" }}
       </div>
-      <div class="content" :title="item.content">
-        {{ item.content || "" }}
-      </div>
-      <div class="content" :title="item.category">
-        {{ item.category || "" }}
-      </div>
-      <div class="content" :title="item.unit">
-        {{ item.unit || "" }}
-      </div>
-      <div class="content" :title="item.origin_price">
-        {{ item.origin_price || "" }}
-      </div>
-      <div class="content" :title="item.price">
-        {{ item.price || "" }}
-      </div>
-
-      <div class="content" :title="item.imageUrl">
-        {{ item.imageUrl || "" }}
-      </div>
-      <div class="content" :title="item.imagesUrl">
-        {{ item.imagesUrl || "" }}
-      </div>
-      <div class="content" :title="item.is_enabled">
-        <Checkbox
-          :binary="true"
-          v-model="item.is_enabled"
-          @change="changeActivate(item)"
-        />
+      <div class="content" :title="item.診所名稱">
+        {{ item?.診所名稱 || "" }}
       </div>
     </main>
     <main
@@ -158,7 +117,7 @@
 <script>
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { useToast } from "vue-toastification";
-
+import { citiesData, zonesData } from "@/utils/constant.js";
 import { getMapLists } from "Service/apis.js";
 
 export default defineComponent({
@@ -170,305 +129,145 @@ export default defineComponent({
     const headers = ref([
       { name: "操作", key: "", sortDesc: null },
 
-      { name: "標題", key: "title", sortDesc: null }, //必填
-      { name: "描述", key: "description", sortDesc: null },
-      { name: "說明", key: "content", sortDesc: null },
-      { name: "分類", key: "category", sortDesc: null }, //必填
-      { name: "單位", key: "unit", sortDesc: null }, //必填
-      { name: "原價", key: "origin_price", sortDesc: null }, //必填
-      { name: "售價", key: "price", sortDesc: null }, //必填
-
-      { name: "主圖", key: "imageUrl", sortDesc: null },
-      { name: "其他圖片", key: "imagesUrl", sortDesc: null },
-      { name: "是否啟用", key: "is_enabled", sortDesc: null },
+      { name: "縣市別", key: "", sortDesc: null }, //必填
+      { name: "鄉鎮市區別", key: "", sortDesc: null },
+      { name: "診所名稱", key: "", sortDesc: null },
     ]);
 
     const items = ref([]);
+    const allItems = ref([]);
 
     const offset = ref(0);
     const rows = ref(10);
     const totalItemsCount = ref(1);
-    const orderByArr = ref([]);
 
     const toast = useToast();
 
-    async function getData() {
+    const filterItems = () => {
+      //top & skip
+      const page = +offset.value / +rows.value + +1;
+      const skip = (page - 1) * rows.value;
+      const top = rows.value;
+
+      //search Filter
+      let arr = JSON.parse(JSON.stringify(allItems.value));
+      if (selectedCity.value) {
+        arr = arr.filter((s) => `${s.縣市別}` == selectedCity.value);
+      }
+      if (selectedZone.value) {
+        arr = arr.filter((s) => `${s.鄉鎮市區別}` == selectedZone.value);
+      }
+      if (selectedClinic.value) {
+        arr = arr.filter((s) => s.MId.includes(selectedClinic.value));
+      }
+
+      totalItemsCount.value = arr.length;
+      // this.totalCountStr = `共${arr.length} 筆`;
+
+      //pageNow
+      arr = arr.slice(skip, top + skip);
+      items.value = JSON.parse(JSON.stringify(arr));
+    };
+
+    const getData = async () => {
       try {
-        //odata3 qs
-        const page = +offset.value / +rows.value + +1;
-        const skip = (page - 1) * rows.value;
-        const top = rows.value;
-        const orderBy = orderByArr.value;
+        // //odata3 qs
+        // const page = +offset.value / +rows.value + +1;
+        // const skip = (page - 1) * rows.value;
+        // const top = rows.value;
 
-        if (
-          !(
-            orderByArr.value.includes("Seq") ||
-            orderByArr.value.includes("Seq desc")
-          )
-        ) {
-          orderBy.push("Seq");
-        }
-
-        const obj = { top, skip, orderBy };
-        // let qs = buildQuery(obj);
-        let bQs = false;
-        let qs = "?page=1";
+        // const obj = { top, skip };
+        // // let qs = buildQuery(obj);
+        // let bQs = false;
+        // let qs = "";
 
         //top:筆數、skip:跳過幾筆
 
-        const res = await getMapLists(`${qs}`);
+        const res = await getMapLists();
 
-        console.log("res", res);
-        // let { Items, Count } = res.data;
-
-        items.value = [...res.data?.products];
-        // totalItemsCount.value = Count;
+        // items.value = [...res.data?.result?.records];
+        allItems.value = [...res.data?.result?.records];
+        totalItemsCount.value = res.data?.result?.total || 0;
+        filterItems();
       } catch (e) {
         toast.error(`${e.response ? e.response.data : e}`, {
           timeout: 2000,
           hideProgressBar: true,
         });
       }
-    }
+    };
 
-    //sort
-    function sortData(item) {
-      if (!item.key) {
-        return;
-      }
-      if (item.sortDesc) {
-        item.sortDesc = null;
-      } else if (false === item.sortDesc) {
-        item.sortDesc = true;
-      } else if (null === item.sortDesc) {
-        item.sortDesc = false;
-      }
-      orderByArr.value = [];
+    const zones = ref([]);
 
-      headers.value.forEach((s) => {
-        if (s.sortDesc !== null) {
-          orderByArr.value.push(s.sortDesc ? `${s.key} desc` : `${s.key}`);
-        }
-      });
-      getData();
-    }
+    const setZones = () => {
+      const arr = zonesData.find((s) => s.text == selectedCity.value);
+
+      if (!!arr) {
+        let arrData = [];
+        arrData = arr.zone.map((s) => ({
+          value: s,
+          text: s,
+        }));
+
+        arrData.unshift({ text: "全部", value: null });
+        zones.value = arrData;
+        console.log("arrData", arrData);
+      } else {
+        zones.value = null;
+      }
+      selectedZone.value = null;
+      filterItems();
+    };
 
     //for search
-    const selectedActivate = ref(null);
-    const selectedNo = ref("");
-    const selectedName = ref("");
+    const selectedCity = ref(null);
+    const selectedZone = ref(null);
+    const selectedClinic = ref(null);
 
-    const activates = ref([
-      { value: true, text: "啟用" },
-      { value: false, text: "已停用" },
-    ]);
-
-    function clearSearch() {
-      selectedActivate.value = "";
-      selectedNo.value = "";
-      selectedName.value = "";
+    const clearSearch = () => {
+      selectedZone.value = null;
+      selectedCity.value = null;
+      selectedClinic.value = null;
       getData();
-    }
+    };
 
     onMounted(async () => {
       await getData();
     });
 
     watch(offset, (v, pv) => {
-      getData();
+      filterItems();
     });
 
     watch(rows, (v, pv) => {
-      getData();
+      filterItems();
     });
-
-    //-----------editModal----------------
-    const editModal = ref(false);
-    const nowType = ref(1);
-    const modalItem = ref({
-      No: "",
-      Name: "",
-      IsActivated: true,
-    });
-
-    function showEditModal(type, item) {
-      //type- 1新增、2編輯、3刪除
-      let imgArr = new Array(6).fill().map((s, i) => ({
-        url: "",
-        index: `網址${i + 1}`,
-      }));
-
-      if (type == 2 || type == 3) {
-        modalItem.value = { ...item };
-        if (item?.imagesUrl) {
-          modalItem.value.imagesArr = item.imagesUrl.map((s, i) => ({
-            url: s,
-            index: `網址${i + 1}`,
-          }));
-          modalItem.value.imagesArr.unshift({
-            url: item.imageUrl,
-            index: `主圖網址`,
-          });
-        } else {
-          modalItem.value.imagesArr = imgArr;
-          modalItem.value.imagesArr.unshift({
-            url: item.imageUrl,
-            index: `主圖網址`,
-          });
-        }
-      } else {
-        modalItem.value = {
-          category: "",
-          content: "",
-          description: "",
-          imageUrl: "",
-          imagesArr: imgArr,
-          is_enabled: true,
-
-          origin_price: 0,
-          price: 0,
-          title: "",
-          unit: "",
-        };
-      }
-      nowType.value = type;
-      editModal.value = true;
-    }
-
-    const saveEditModal = async () => {
-      // if (!Boolean(modalItem.value.No) || !Boolean(modalItem.value.Name)) {
-      //   toast.error(`產品代碼和產品名稱為必填欄位`, {
-      //     timeout: 4000,
-      //     hideProgressBar: true,
-      //   });
-      //   return;
-      // }
-
-      const obj = {
-        ...modalItem.value,
-      };
-
-      obj.imagesUrl = obj.imagesArr.slice(1).map((s) => `${s.url}`);
-      obj.imageUrl = obj.imagesArr[0].url;
-      delete obj.imagesArr;
-
-      try {
-        // const res = await putInstitutionList(obj);
-        if (nowType.value == 1) {
-          const res1 = await postProducts({ data: obj });
-        }
-        if (nowType.value == 2) {
-          const res2 = await putProducts({ data: obj }, obj.id);
-        }
-        if (nowType.value == 3) {
-          const res3 = await deleteProducts(obj.id);
-        }
-
-        toast.success(
-          `${
-            nowType.value == 1 ? "新增" : nowType.value == 2 ? "編輯" : "刪除"
-          }成功`,
-          {
-            timeout: 2000,
-            hideProgressBar: true,
-          }
-        );
-      } catch (e) {
-        toast.error(`${e.response ? e.response.data : e}`, {
-          timeout: 2000,
-          hideProgressBar: true,
-        });
-      }
-      getData();
-      editModal.value = false;
-    };
-
-    const setStatus = async (item) => {
-      const obj = {
-        ...item,
-      };
-      const res2 = await putProducts({ data: obj }, obj.id);
-      toast.success(`編輯成功`, {
-        timeout: 2000,
-        hideProgressBar: true,
-      });
-    };
-
-    async function changeActivate(item) {
-      const obj = {
-        No: item.No,
-        Name: item.Name,
-        IsActivated: item.IsActivated,
-      };
-      try {
-        // await modifyFunctionItem(obj);
-        toast.success("產品調整成功", {
-          timeout: 2000,
-          hideProgressBar: true,
-        });
-      } catch (e) {
-        toast.error(`${e.response ? e.response.data : e}`, {
-          timeout: 2000,
-          hideProgressBar: true,
-        });
-      }
-    }
-
-    const images = ref("");
-
-    const responsiveOptions = ref([
-      {
-        breakpoint: "1024px",
-        numVisible: 5,
-      },
-      {
-        breakpoint: "768px",
-        numVisible: 3,
-      },
-      {
-        breakpoint: "560px",
-        numVisible: 1,
-      },
-    ]);
 
     return {
-      images,
-      responsiveOptions,
       //for list data variable
+      citiesData,
+      zonesData,
       headers,
       items,
+      allItems,
       toast,
-
+      zones,
+      setZones,
       //list data Function
       getData,
-      sortData,
+      filterItems,
 
       //paginator
       offset, //目前在第幾筆
       rows, //1頁顯示筆數
       totalItemsCount,
-      orderByArr,
 
       //for search
-      selectedActivate,
-      selectedNo,
-      selectedName,
-
-      activates,
+      selectedZone,
+      selectedCity,
+      selectedClinic,
 
       clearSearch,
-
-      //editModal variable
-      editModal,
-      modalItem,
-      nowType,
-
-      //editModal Function
-      showEditModal,
-      saveEditModal,
-      setStatus,
-
-      changeActivate,
     };
   },
 });
@@ -513,7 +312,7 @@ export default defineComponent({
 }
 .ecommerce-grid {
   display: grid;
-  grid-template-columns: 180px repeat(10, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 
   text-align: center;
 
@@ -548,12 +347,6 @@ export default defineComponent({
   > .full-content {
     grid-column: 1 / -1;
   }
-}
-
-.modal-main-content {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-column-gap: 10px;
 }
 
 .my-dark {
