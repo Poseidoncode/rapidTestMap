@@ -1,0 +1,40 @@
+
+.p-button-edit {
+  background-color:#0391B5;
+}
+.p-button-add {
+  @apply border-transparent;
+  color: #fff;
+  background-color: #d02090;
+}
+
+.p-button-rm {
+  background-color:#fff;
+  border: 1px solid #CED4DA;
+  color:#000
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  border-color: #e3f2fd;
+  color: #fff;
+  background: #efa145;
+  border-radius: 19px;
+}
+
+.p-component.p-dropdown .p-dropdown-trigger{
+   color: #efa145;
+}
+.p-component.p-dropdown .pi{
+  font-weight:bold
+}
+.p-component.p-multiselect .p-multiselect-trigger {
+    color: #efa145;
+}
+.p-component.p-multiselect .pi{ 
+  font-weight:bold
+}
+
+.p-disabled, .p-component:disabled {
+    opacity: 0.6;
+    background-color: #F1f1F1;
+}
