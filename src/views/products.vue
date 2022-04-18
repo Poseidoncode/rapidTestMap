@@ -481,4 +481,8 @@ export default defineComponent({
     font-weight: bolder;
   }
 }
+
+::v-deep(.leaflet-right) {
+  display: none;
+}
 </style>
