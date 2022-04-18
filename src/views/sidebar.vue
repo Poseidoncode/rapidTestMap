@@ -91,6 +91,7 @@
             <a
               href="#"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              @click.prevent="setCenter(item)"
             >
               Map
               <svg
@@ -114,17 +115,18 @@
 </template>
 
 <script>
-import { inject, ref, onMounted, watch, computed } from "vue";
+import { defineComponent, inject, ref, onMounted, watch, computed } from "vue";
 import { useToast } from "vue-toastification";
 import { citiesData, zonesData } from "@/utils/constant.js";
 import { getMapLists } from "Service/apis.js";
-export default {
+export default defineComponent({
   props: {
     // specColum: {
     //   type: String,
     //   default: "",
     // },
   },
+  emits: ["setMarker", "setCenterData"],
   setup(props, { emit }) {
     const cartOpen = ref(true);
     // emit("update:modelValue", _newValues);
@@ -149,9 +151,9 @@ export default {
 
     const filterItems = () => {
       //top & skip
-      const page = +offset.value / +rows.value + +1;
-      const skip = (page - 1) * rows.value;
-      const top = rows.value;
+      // const page = +offset.value / +rows.value + +1;
+      // const skip = (page - 1) * rows.value;
+      // const top = rows.value;
 
       //search Filter
       let arr = JSON.parse(JSON.stringify(allItems.value));
@@ -169,8 +171,10 @@ export default {
       // this.totalCountStr = `共${arr.length} 筆`;
 
       //pageNow
-      arr = arr.slice(skip, top + skip);
+      // arr = arr.slice(skip, top + skip);
       items.value = JSON.parse(JSON.stringify(arr));
+
+      emit("setMarker", arr);
     };
 
     const getData = async () => {
@@ -245,6 +249,11 @@ export default {
     watch(rows, (v, pv) => {
       filterItems();
     });
+
+    const setCenter = (item) => {
+      emit("setCenterData", item);
+    };
+
     return {
       //for list data variable
       citiesData,
@@ -271,9 +280,11 @@ export default {
 
       clearSearch,
       cartOpen,
+
+      setCenter,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

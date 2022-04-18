@@ -1,23 +1,37 @@
 <template>
-  <sidebar></sidebar>
+  <sidebar @setMarker="setMarker" @setCenterData="setCenterData"></sidebar>
   <div style="height: 100vh; width: 100vw">
     <l-map
       v-model="zoom"
       v-model:zoom="zoom"
-      :center="[25.053065384952, 121.59537159907072]"
+      :center="[ceterdata.lat, ceterdata.lng]"
       @move="log('move')"
     >
       <l-tile-layer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       ></l-tile-layer>
       <l-control-layers />
+
       <l-marker
+        v-for="(item, i) in allMarkers"
+        :key="`allMarkers${i}`"
+        :lat-lng="[item.Lat, item.Long]"
+        draggable
+      >
+        <l-tooltip>
+          <p>診所名稱: {{ item.診所名稱 || "" }}</p>
+          <p>診所地址: {{ item.診所地址 || "" }}</p>
+          <p>診所電話: {{ item.診所電話 || "" }}</p>
+        </l-tooltip>
+      </l-marker>
+
+      <!-- <l-marker
         :lat-lng="[25.06752703436326, 121.57563054124498]"
         draggable
         @moveend="log('moveend')"
       >
         <l-tooltip> lol </l-tooltip>
-      </l-marker>
+      </l-marker> -->
 
       <!-- <l-marker :lat-lng="[47.41322, -1.219482]">
         <l-icon :icon-url="iconUrl" :icon-size="iconSize" />
@@ -221,7 +235,10 @@ export default defineComponent({
   },
   setup() {
     //map
-
+    const ceterdata = ref({
+      lat: 25.053065384952,
+      lng: 121.59537159907072,
+    });
     const zoom = ref(14);
     const iconWidth = ref(25);
     const iconHeight = ref(40);
@@ -242,149 +259,23 @@ export default defineComponent({
       }
     };
 
-    //-----------ListData----------------
-    //for list
-    const headers = ref([
-      { name: "操作", key: "", sortDesc: null },
+    const allMarkers = ref([]);
 
-      { name: "縣市別", key: "", sortDesc: null }, //必填
-      { name: "鄉鎮市區別", key: "", sortDesc: null },
-      { name: "診所名稱", key: "", sortDesc: null },
-    ]);
-
-    const items = ref([]);
-    const allItems = ref([]);
-
-    const offset = ref(0);
-    const rows = ref(10);
-    const totalItemsCount = ref(1);
-
-    const toast = useToast();
-
-    const filterItems = () => {
-      //top & skip
-      const page = +offset.value / +rows.value + +1;
-      const skip = (page - 1) * rows.value;
-      const top = rows.value;
-
-      //search Filter
-      let arr = JSON.parse(JSON.stringify(allItems.value));
-      if (selectedCity.value) {
-        arr = arr.filter((s) => `${s.縣市別}` == selectedCity.value);
-      }
-      if (selectedZone.value) {
-        arr = arr.filter((s) => `${s.鄉鎮市區別}` == selectedZone.value);
-      }
-      if (selectedClinic.value) {
-        arr = arr.filter((s) => s.MId.includes(selectedClinic.value));
-      }
-
-      totalItemsCount.value = arr.length;
-      // this.totalCountStr = `共${arr.length} 筆`;
-
-      //pageNow
-      arr = arr.slice(skip, top + skip);
-      items.value = JSON.parse(JSON.stringify(arr));
+    const setMarker = (data) => {
+      allMarkers.value = [...data];
+      // console.log("setMarker", data, "allMarkers.value", allMarkers.value);
     };
 
-    const getData = async () => {
-      try {
-        // //odata3 qs
-        // const page = +offset.value / +rows.value + +1;
-        // const skip = (page - 1) * rows.value;
-        // const top = rows.value;
-
-        // const obj = { top, skip };
-        // // let qs = buildQuery(obj);
-        // let bQs = false;
-        // let qs = "";
-
-        //top:筆數、skip:跳過幾筆
-
-        const res = await getMapLists();
-
-        // items.value = [...res.data?.result?.records];
-        allItems.value = [...res.data?.result?.records];
-        totalItemsCount.value = res.data?.result?.total || 0;
-        filterItems();
-      } catch (e) {
-        toast.error(`${e.response ? e.response.data : e}`, {
-          timeout: 2000,
-          hideProgressBar: true,
-        });
-      }
+    const setCenterData = (data) => {
+      ceterdata.value.lat = data.Lat;
+      ceterdata.value.lng = data.Long;
     };
-
-    const zones = ref([]);
-
-    const setZones = () => {
-      const arr = zonesData.find((s) => s.text == selectedCity.value);
-
-      if (!!arr) {
-        let arrData = [];
-        arrData = arr.zone.map((s) => ({
-          value: s,
-          text: s,
-        }));
-
-        arrData.unshift({ text: "全部", value: null });
-        zones.value = arrData;
-      } else {
-        zones.value = null;
-      }
-      selectedZone.value = null;
-      filterItems();
-    };
-
-    //for search
-    const selectedCity = ref(null);
-    const selectedZone = ref(null);
-    const selectedClinic = ref(null);
-
-    const clearSearch = () => {
-      selectedZone.value = null;
-      selectedCity.value = null;
-      selectedClinic.value = null;
-      getData();
-    };
-
-    onMounted(async () => {
-      await getData();
-    });
-
-    watch(offset, (v, pv) => {
-      filterItems();
-    });
-
-    watch(rows, (v, pv) => {
-      filterItems();
-    });
 
     return {
-      //for list data variable
-      citiesData,
-      zonesData,
-      headers,
-      items,
-      allItems,
-      toast,
-      zones,
-      setZones,
-      //list data Function
-      getData,
-      filterItems,
-
-      //paginator
-      offset, //目前在第幾筆
-      rows, //1頁顯示筆數
-      totalItemsCount,
-
-      //for search
-      selectedZone,
-      selectedCity,
-      selectedClinic,
-
-      clearSearch,
+      ceterdata,
+      allMarkers,
+      setMarker,
+      setCenterData,
 
       zoom,
       iconWidth,
