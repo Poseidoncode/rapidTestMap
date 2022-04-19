@@ -42,6 +42,7 @@
         optionValue="value"
         class="custom-height"
         @change="setZones"
+        :showClear="true"
       />
     </div>
     <div class="p-inputgroup mb-1">
@@ -56,6 +57,7 @@
         optionValue="value"
         class="custom-height"
         @change="filterItems"
+        :showClear="true"
       />
     </div>
     <div class="p-inputgroup">
@@ -88,7 +90,7 @@
             <p class="font-normal text-gray-700 mb-3 dark:text-gray-400">
               電話: {{ item.診所電話 || "" }}
             </p>
-            <a
+            <span
               href="#"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               @click.prevent="setCenter(item)"
@@ -106,11 +108,11 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-            </a>
+            </span>
 
-            <a
+            <span
               href="#"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-3"
               @click.prevent="setDestination(item)"
             >
               Google導航
@@ -126,7 +128,7 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-            </a>
+            </span>
           </div>
         </div>
       </div>
@@ -269,6 +271,7 @@ export default defineComponent({
     });
 
     const setCenter = (item) => {
+      item.needbuild = true;
       emit("setCenterData", item);
     };
 
@@ -293,6 +296,7 @@ export default defineComponent({
       const obj = {
         Lat: crd.latitude,
         Long: crd.longitude,
+        needbuild: false,
       };
       emit("setCenterData", obj);
       store.commit("m_setUserLocale", obj);

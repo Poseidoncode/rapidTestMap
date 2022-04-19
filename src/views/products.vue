@@ -15,17 +15,17 @@
 
       <l-marker :lat-lng="[userLat, userLong]">
         <l-icon
-          icon-url="https://vue2-leaflet.netlify.app/images/baseball-marker.png"
-          :icon-size="[50, 55]"
+          icon-url="https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png"
+          :icon-size="[25, 41]"
         />
         <l-popup>
-          <p>你目前的位置</p>
+          <p>目前位置</p>
         </l-popup>
         <l-tooltip
           :options="{
-            permanent: ceterdata.Lat == userLat && ceterdata.Long == userLong,
+            permanent: true,
           }"
-          >你目前的位置
+          >目前位置
         </l-tooltip>
       </l-marker>
 
@@ -35,14 +35,25 @@
         :lat-lng="[item.Lat, item.Long]"
         @ready="setTooltip"
       >
+        <l-icon
+          icon-url="https://cdn-icons-png.flaticon.com/512/3028/3028573.png"
+          :icon-size="[50, 55]"
+          v-if="ceterdata.Lat == item.Lat"
+        />
         <l-tooltip
           :options="{
             permanent: ceterdata.Lat == item.Lat && ceterdata.Long == item.Long,
           }"
         >
-          <p>診所名稱: {{ item.診所名稱 || "" }}</p>
-          <p>診所地址: {{ item.診所地址 || "" }}</p>
-          <p>診所電話: {{ item.診所電話 || "" }}</p>
+          <p class="mb-2 text-base">
+            診所名稱: <b style="color: #013b7d">{{ item.診所名稱 || "" }}</b>
+          </p>
+          <p class="mb-2 text-base">
+            診所地址: <b style="color: #013b7d">{{ item.診所地址 || "" }}</b>
+          </p>
+          <p class="mb-2 text-base">
+            診所電話: <b style="color: #013b7d">{{ item.診所電話 || "" }}</b>
+          </p>
         </l-tooltip>
         <!-- <l-popup>
           <p>診所名稱: {{ item.診所名稱 || "" }}</p>
@@ -262,12 +273,13 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const componentsKey = ref(0);
     //map
     const ceterdata = ref({
       Lat: 25.053065384952,
       Long: 121.59537159907072,
     });
-    const zoom = ref(14);
+    const zoom = ref(12);
 
     const log = (a) => {
       console.log(a);
@@ -282,6 +294,11 @@ export default defineComponent({
     const setCenterData = (data) => {
       ceterdata.value.Lat = data.Lat;
       ceterdata.value.Long = data.Long;
+      zoom.value = 16;
+      if (data.needbuild) {
+        componentsKey.value += 1;
+      }
+      //
     };
 
     const userLat = computed(() => {
@@ -308,6 +325,7 @@ export default defineComponent({
       userLong,
 
       setTooltip,
+      componentsKey,
     };
   },
 });
