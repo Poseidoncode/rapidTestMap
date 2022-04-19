@@ -1,5 +1,8 @@
 export default {
   user: {
-    locale: "",
+    locale: {
+      Lat: "",
+      Long: "",
+    },
   },
 };

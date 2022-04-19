@@ -1,5 +1,6 @@
 <template>
   <sidebar @setMarker="setMarker" @setCenterData="setCenterData"></sidebar>
+
   <div style="height: 100vh; width: 100vw">
     <l-map
       v-model="zoom"
@@ -12,17 +13,42 @@
       ></l-tile-layer>
       <l-control-layers />
 
+      <l-marker :lat-lng="[userLat, userLong]">
+        <l-icon
+          icon-url="https://vue2-leaflet.netlify.app/images/baseball-marker.png"
+          :icon-size="[50, 55]"
+        />
+        <l-popup>
+          <p>你目前的位置</p>
+        </l-popup>
+        <l-tooltip
+          :options="{
+            permanent: ceterdata.Lat == userLat && ceterdata.Long == userLong,
+          }"
+          >你目前的位置
+        </l-tooltip>
+      </l-marker>
+
       <l-marker
         v-for="(item, i) in allMarkers"
         :key="`allMarkers${i}`"
         :lat-lng="[item.Lat, item.Long]"
-        draggable
+        @ready="setTooltip"
       >
-        <l-tooltip>
+        <l-tooltip
+          :options="{
+            permanent: ceterdata.Lat == item.Lat && ceterdata.Long == item.Long,
+          }"
+        >
           <p>診所名稱: {{ item.診所名稱 || "" }}</p>
           <p>診所地址: {{ item.診所地址 || "" }}</p>
           <p>診所電話: {{ item.診所電話 || "" }}</p>
         </l-tooltip>
+        <!-- <l-popup>
+          <p>診所名稱: {{ item.診所名稱 || "" }}</p>
+          <p>診所地址: {{ item.診所地址 || "" }}</p>
+          <p>診所電話: {{ item.診所電話 || "" }}</p>
+        </l-popup> -->
       </l-marker>
 
       <!-- <l-marker
@@ -242,30 +268,15 @@ export default defineComponent({
       Long: 121.59537159907072,
     });
     const zoom = ref(14);
-    const iconWidth = ref(25);
-    const iconHeight = ref(40);
-    const iconUrl = computed(() => {
-      return `https://placekitten.com/${iconWidth.value}/${iconHeight.value}`;
-    });
-    const iconSize = computed(() => {
-      return [iconWidth.value, iconHeight.value];
-    });
 
     const log = (a) => {
       console.log(a);
-    };
-    const changeIcon = (a) => {
-      iconWidth.value += 2;
-      if (iconWidth.value > iconHeight.value) {
-        iconWidth.value = Math.floor(iconHeight.value / 2);
-      }
     };
 
     const allMarkers = ref([]);
 
     const setMarker = (data) => {
       allMarkers.value = [...data];
-      // console.log("setMarker", data, "allMarkers.value", allMarkers.value);
     };
 
     const setCenterData = (data) => {
@@ -273,19 +284,30 @@ export default defineComponent({
       ceterdata.value.Long = data.Long;
     };
 
+    const userLat = computed(() => {
+      return store.state.user.locale?.Lat;
+    });
+
+    const userLong = computed(() => {
+      return store.state.user.locale?.Long;
+    });
+
+    const setTooltip = () => {
+      console.log("~~~~~~~~~~~");
+    };
+
     return {
       ceterdata,
       allMarkers,
       setMarker,
       setCenterData,
-
       zoom,
-      iconWidth,
-      iconHeight,
-      iconUrl,
-      iconSize,
       log,
-      changeIcon,
+
+      userLat,
+      userLong,
+
+      setTooltip,
     };
   },
 });
