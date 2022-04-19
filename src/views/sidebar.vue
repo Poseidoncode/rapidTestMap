@@ -139,6 +139,7 @@ import { defineComponent, inject, ref, onMounted, watch, computed } from "vue";
 import { useToast } from "vue-toastification";
 import { citiesData, zonesData } from "@/utils/constant.js";
 import { getMapLists } from "Service/apis.js";
+import { useStore } from "vuex";
 export default defineComponent({
   props: {
     // specColum: {
@@ -148,6 +149,7 @@ export default defineComponent({
   },
   emits: ["setMarker", "setCenterData"],
   setup(props, { emit }) {
+    const store = useStore();
     const cartOpen = ref(true);
     // emit("update:modelValue", _newValues);
     //-----------ListData----------------
@@ -258,10 +260,6 @@ export default defineComponent({
       getData();
     };
 
-    onMounted(async () => {
-      await getData();
-    });
-
     watch(offset, (v, pv) => {
       filterItems();
     });
@@ -277,6 +275,46 @@ export default defineComponent({
     const setDestination = (item) => {
       window.open(`https://www.google.com/maps/dir/${item.診所地址}/`);
     };
+
+    const optionsLocale = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+
+    const successLocale = (pos) => {
+      const crd = pos.coords;
+
+      // console.log("Your current position is:");
+      // console.log("Latitude : " + crd.latitude);
+      // console.log("Longitude: " + crd.longitude);
+      // console.log("More or less " + crd.accuracy + " meters.");
+
+      const obj = {
+        Lat: crd.latitude,
+        Long: crd.longitude,
+      };
+      emit("setCenterData", obj);
+      store.commit("m_setUserLocale", obj);
+    };
+
+    const errorLocale = (err) => {
+      console.warn("ERROR(" + err.code + "): " + err.message);
+    };
+
+    const getLocaleData = () => {
+      navigator.geolocation.getCurrentPosition(
+        successLocale,
+        errorLocale,
+        optionsLocale
+      );
+    };
+
+    onMounted(async () => {
+      await getData();
+      await getLocaleData();
+      console.log("store.state", store.state);
+    });
 
     return {
       //for list data variable

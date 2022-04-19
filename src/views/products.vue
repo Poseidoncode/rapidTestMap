@@ -4,7 +4,7 @@
     <l-map
       v-model="zoom"
       v-model:zoom="zoom"
-      :center="[ceterdata.lat, ceterdata.lng]"
+      :center="[ceterdata.Lat, ceterdata.Long]"
       @move="log('move')"
     >
       <l-tile-layer
@@ -204,6 +204,7 @@ import { useToast } from "vue-toastification";
 import { citiesData, zonesData } from "@/utils/constant.js";
 import { getMapLists } from "Service/apis.js";
 import sidebar from "./sidebar.vue";
+import { useStore } from "vuex";
 import {
   LMap,
   LIcon,
@@ -234,10 +235,11 @@ export default defineComponent({
     sidebar,
   },
   setup() {
+    const store = useStore();
     //map
     const ceterdata = ref({
-      lat: 25.053065384952,
-      lng: 121.59537159907072,
+      Lat: 25.053065384952,
+      Long: 121.59537159907072,
     });
     const zoom = ref(14);
     const iconWidth = ref(25);
@@ -267,8 +269,8 @@ export default defineComponent({
     };
 
     const setCenterData = (data) => {
-      ceterdata.value.lat = data.Lat;
-      ceterdata.value.lng = data.Long;
+      ceterdata.value.Lat = data.Lat;
+      ceterdata.value.Long = data.Long;
     };
 
     return {
