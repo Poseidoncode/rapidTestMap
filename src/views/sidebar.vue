@@ -279,7 +279,7 @@ export default defineComponent({
       });
 
       selectedCity.value = zoneArr[0].text;
-      getData();
+
       setZones();
 
       emit("setCenterData", obj);
