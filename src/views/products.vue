@@ -37,14 +37,8 @@
         <l-icon
           icon-url="https://cdn-icons-png.flaticon.com/512/3028/3028573.png"
           :icon-size="[50, 55]"
-          v-if="ceterdata.Lat == item.Lat"
         />
-        <l-tooltip
-          :options="{
-            permanent: ceterdata.Lat == item.Lat && ceterdata.Long == item.Long,
-          }"
-        >
-          {{ item.showMarker }}
+        <l-tooltip>
           <p class="mb-2 text-base">
             診所名稱: <b style="color: #013b7d">{{ item.診所名稱 || "" }}</b>
           </p>
@@ -56,11 +50,6 @@
           </p>
         </l-tooltip>
         <l-popup>
-          <p v-show="showNowMarker">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed
-            pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi. Donec
-            finibus semper metus id malesuada.
-          </p>
           <p v-show="item.showMarker">診所名稱: {{ item.診所名稱 || "" }}</p>
           <p>診所地址: {{ item.診所地址 || "" }}</p>
           <p>診所電話: {{ item.診所電話 || "" }}</p>
