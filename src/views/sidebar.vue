@@ -1,6 +1,9 @@
 <template>
   <div class="open-icon" v-show="!cartOpen" @click="cartOpen = !cartOpen">
-    <i class="pi pi-angle-double-left" style="font-size: 2rem"></i>
+    <i class="pi pi-angle-left" style="font-size: 2rem"></i>
+  </div>
+  <div class="close-icon" v-show="cartOpen" @click="cartOpen = !cartOpen">
+    <i class="pi pi-angle-right" style="font-size: 2rem"></i>
   </div>
 
   <div
@@ -13,7 +16,7 @@
         COVID-19家用快篩試劑定點診所名單
       </h3>
 
-      <button
+      <!-- <button
         @click="cartOpen = !cartOpen"
         class="text-gray-600 focus:outline-none"
       >
@@ -28,7 +31,7 @@
         >
           <path d="M6 18L18 6M6 6l12 12"></path>
         </svg>
-      </button>
+      </button> -->
     </div>
     <div class="p-inputgroup mb-1">
       <span class="p-inputgroup-addon">縣市別</span>
@@ -352,17 +355,19 @@ export default defineComponent({
 .list-content {
   width: 1200px;
 }
-.open-icon {
+
+.open-icon,
+.close-icon {
   position: fixed;
-  z-index: 1000;
-  width: 36px;
-  right: 20px;
-  top: 100px;
+  z-index: 1500;
+  right: 41px;
+  top: 8px;
   cursor: pointer;
   color: #fff;
-  height: 36px;
   background: #1c54d4;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
 }
 
 .p-inputgroup-addon {
