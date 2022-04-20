@@ -50,7 +50,7 @@
           </p>
         </l-tooltip>
         <l-popup>
-          <p v-show="item.showMarker">診所名稱: {{ item.診所名稱 || "" }}</p>
+          <p>診所名稱: {{ item.診所名稱 || "" }}</p>
           <p>診所地址: {{ item.診所地址 || "" }}</p>
           <p>診所電話: {{ item.診所電話 || "" }}</p>
         </l-popup>
