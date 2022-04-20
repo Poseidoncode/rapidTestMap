@@ -10,6 +10,7 @@
     :class="cartOpen ? 'translate-x-0 ease-out' : 'translate-x-full ease-in'"
     class="fixed right-0 top-0 max-w-md w-full h-full px-6 py-4 transition duration-300 transform overflow-y-auto bg-white border-l-2 border-gray-300"
     style="z-index: 1000"
+    @scroll="scrollEvent"
   >
     <div class="flex items-center justify-between">
       <h3 class="text-xl font-medium text-gray-700 mb-1">
@@ -130,19 +131,12 @@ import { citiesData, zonesData } from "@/utils/constant.js";
 import { getMapLists } from "Service/apis.js";
 import { useStore } from "vuex";
 export default defineComponent({
-  props: {
-    // specColum: {
-    //   type: String,
-    //   default: "",
-    // },
-  },
+  props: {},
   emits: ["setMarker", "setCenterData"],
   setup(props, { emit }) {
     const store = useStore();
     const cartOpen = ref(true);
-    // emit("update:modelValue", _newValues);
-    //-----------ListData----------------
-    //for list
+
     const headers = ref([
       { name: "操作", key: "", sortDesc: null },
 
@@ -236,14 +230,14 @@ export default defineComponent({
     };
 
     const setCenter = (item) => {
-      item.needbuild = true;
+      // console.log("setCenter-win", window.innerWidth);
+      if (window.innerWidth < 500) {
+        cartOpen.value = false;
+      }
       emit("setCenterData", item);
     };
 
     const setDestination = (item) => {
-      // window.open(
-      //   `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.Lat},+${item.Long}`
-      // );
       window.open(
         `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.診所地址}`
       );
@@ -261,7 +255,6 @@ export default defineComponent({
       const obj = {
         Lat: crd.latitude,
         Long: crd.longitude,
-        needbuild: false,
       };
 
       let zoneArr = zonesData.map((s) => {
@@ -304,7 +297,12 @@ export default defineComponent({
       await getLocaleData();
     });
 
+    const scrollEvent = () => {
+      console.log("scrollEvent", window);
+    };
+
     return {
+      scrollEvent,
       //for list data variable
       citiesData,
       zonesData,

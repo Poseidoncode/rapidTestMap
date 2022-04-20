@@ -36,7 +36,7 @@
           icon-url="https://cdn-icons-png.flaticon.com/512/3028/3028573.png"
           :icon-size="[50, 55]"
         />
-        <l-tooltip>
+        <!-- <l-tooltip>
           <p class="mb-2" style="font-size: 16px">
             診所名稱: <b style="color: #013b7d">{{ item.診所名稱 || "" }}</b>
           </p>
@@ -46,7 +46,7 @@
           <p class="mb-2" style="font-size: 16px">
             診所電話: <b style="color: #013b7d">{{ item.診所電話 || "" }}</b>
           </p>
-        </l-tooltip>
+        </l-tooltip> -->
         <l-popup>
           <button
             type="button"
@@ -121,7 +121,7 @@ export default defineComponent({
     const zoom = ref(12);
 
     const log = (a) => {
-      console.log(a);
+      // console.log(a);
     };
 
     const allMarkers = ref([]);
