@@ -288,9 +288,6 @@ export default defineComponent({
     const successLocale = (pos) => {
       const crd = pos.coords;
 
-      // console.log("Your current position is:");
-      // console.log("Latitude : " + crd.latitude);
-      // console.log("Longitude: " + crd.longitude);
       // console.log("More or less " + crd.accuracy + " meters.");
 
       const obj = {
@@ -298,6 +295,23 @@ export default defineComponent({
         Long: crd.longitude,
         needbuild: false,
       };
+
+      let zoneArr = zonesData.map((s) => {
+        s.latDifference = Math.abs(+crd.latitude - +s.lat);
+        s.lngDifference = Math.abs(+crd.longitude - +s.lng);
+        s.differenceTotal =
+          Math.abs(+crd.latitude - +s.lat) + Math.abs(+crd.longitude - +s.lng);
+        return s;
+      });
+
+      zoneArr.sort((a, b) => {
+        return a.differenceTotal - b.differenceTotal;
+      });
+
+      selectedCity.value = zoneArr[0].text;
+
+      console.log("zoneArr", zoneArr);
+
       emit("setCenterData", obj);
       store.commit("m_setUserLocale", obj);
     };

@@ -33,7 +33,6 @@
         v-for="(item, i) in allMarkers"
         :key="`allMarkers${i}`"
         :lat-lng="[item.Lat, item.Long]"
-        @ready="setTooltip"
       >
         <l-icon
           icon-url="https://cdn-icons-png.flaticon.com/512/3028/3028573.png"
@@ -309,10 +308,6 @@ export default defineComponent({
       return store.state.user.locale?.Long;
     });
 
-    const setTooltip = () => {
-      console.log("~~~~~~~~~~~");
-    };
-
     return {
       ceterdata,
       allMarkers,
@@ -324,7 +319,6 @@ export default defineComponent({
       userLat,
       userLong,
 
-      setTooltip,
       componentsKey,
     };
   },
