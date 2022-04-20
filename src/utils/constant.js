@@ -1,5 +1,5 @@
 export const citiesData = [
-  { text: "全部", value: null },
+  // { text: "全部", value: null },
   {
     text: "基隆市",
     value: "基隆市",

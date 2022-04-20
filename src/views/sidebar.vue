@@ -9,8 +9,8 @@
     style="z-index: 1000"
   >
     <div class="flex items-center justify-between">
-      <h3 class="text-2xl font-medium text-gray-700">
-        COVID-19家用快篩試劑社區定點診所名單
+      <h3 class="text-xl font-medium text-gray-700 mb-1">
+        COVID-19家用快篩試劑定點診所名單
       </h3>
 
       <button
@@ -192,6 +192,14 @@ export default defineComponent({
           }
         }
 
+        if (
+          !selectedCity.value &&
+          !selectedZone.value &&
+          !selectedClinic.value
+        ) {
+          return;
+        }
+
         const res = await getMapLists(qs);
         let arr = res.data?.result?.records.map((s) => {
           return s;
@@ -246,8 +254,11 @@ export default defineComponent({
     };
 
     const setDestination = (item) => {
+      // window.open(
+      //   `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.Lat},+${item.Long}`
+      // );
       window.open(
-        `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.Lat},+${item.Long}`
+        `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.診所地址}`
       );
     };
 
