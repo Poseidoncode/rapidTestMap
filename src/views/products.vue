@@ -18,9 +18,9 @@
           icon-url="https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png"
           :icon-size="[25, 41]"
         />
-        <l-popup>
+        <!-- <l-popup>
           <p>目前位置</p>
-        </l-popup>
+        </l-popup> -->
         <l-tooltip
           :options="{
             permanent: true,
@@ -55,64 +55,7 @@
           <p>診所電話: {{ item.診所電話 || "" }}</p>
         </l-popup>
       </l-marker>
-
-      <!-- <l-marker
-        :lat-lng="[25.06752703436326, 121.57563054124498]"
-        draggable
-        @moveend="log('moveend')"
-      >
-        <l-tooltip> lol </l-tooltip>
-      </l-marker> -->
-
-      <!-- <l-marker :lat-lng="[47.41322, -1.219482]">
-        <l-icon :icon-url="iconUrl" :icon-size="iconSize" />
-      </l-marker>
-
-      <l-marker :lat-lng="[50, 50]" @moveend="log('moveend')">
-        <l-popup> lol </l-popup>
-      </l-marker>
-
-      <l-polyline
-        :lat-lngs="[
-          [47.334852, -1.509485],
-          [47.342596, -1.328731],
-          [47.241487, -1.190568],
-          [47.234787, -1.358337],
-        ]"
-        color="green"
-      ></l-polyline>
-      <l-polygon
-        :lat-lngs="[
-          [46.334852, -1.509485],
-          [46.342596, -1.328731],
-          [46.241487, -1.190568],
-          [46.234787, -1.358337],
-        ]"
-        color="#41b782"
-        :fill="true"
-        :fillOpacity="0.5"
-        fillColor="#41b782"
-      />
-      <l-rectangle
-        :lat-lngs="[
-          [46.334852, -1.509485],
-          [46.342596, -1.328731],
-          [46.241487, -1.190568],
-          [46.234787, -1.358337],
-        ]"
-        :fill="true"
-        color="#35495d"
-      />
-      <l-rectangle
-        :bounds="[
-          [46.334852, -1.190568],
-          [46.241487, -1.090357],
-        ]"
-      >
-        <l-popup> lol </l-popup>
-      </l-rectangle> -->
     </l-map>
-    <!-- <button @click="changeIcon">New kitten icon</button> -->
   </div>
 </template>
 
@@ -153,9 +96,8 @@ export default defineComponent({
     sidebar,
   },
   setup() {
-    const showNowMarker = ref(false);
     const store = useStore();
-    const componentsKey = ref(0);
+
     //map
     const ceterdata = ref({
       Lat: 25.053065384952,
@@ -176,19 +118,7 @@ export default defineComponent({
     const setCenterData = (data) => {
       ceterdata.value.Lat = data.Lat;
       ceterdata.value.Long = data.Long;
-      zoom.value = 16;
-
-      const index = allMarkers.value.findIndex((s) => s.Lat === data.Lat);
-      console.log("index", index);
-      if (index > -1) {
-        allMarkers.value[index].showMarker = true;
-        console.log("allMarkers", allMarkers.value);
-        showNowMarker.value = true;
-      }
-
-      // if (data.needbuild) {
-      //   componentsKey.value += 1;
-      // }
+      zoom.value = 18;
     };
 
     const userLat = computed(() => {
@@ -209,8 +139,6 @@ export default defineComponent({
 
       userLat,
       userLong,
-
-      showNowMarker,
     };
   },
 });

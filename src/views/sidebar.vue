@@ -166,28 +166,10 @@ export default defineComponent({
 
     const items = ref([]);
 
-    const offset = ref(0);
-    const rows = ref(10);
-    const totalItemsCount = ref(1);
-
     const toast = useToast();
 
     const getData = async () => {
       try {
-        // //odata3 qs
-        // const page = +offset.value / +rows.value + +1;
-        // const skip = (page - 1) * rows.value;
-        // const top = rows.value;
-
-        // const obj = { top, skip };
-        // // let qs = buildQuery(obj);
-        // let bQs = false;
-        // let qs = "";
-
-        //top:筆數、skip:跳過幾筆
-
-        //
-
         let hasQsed = false;
         let qs = "";
 
@@ -212,20 +194,11 @@ export default defineComponent({
 
         const res = await getMapLists(qs);
         let arr = res.data?.result?.records.map((s) => {
-          s.showMarker = false;
           return s;
         });
         items.value = [...res.data?.result?.records];
-        emit("setMarker", [...res.data?.result?.records]);
-        // console.log("items.value", items.value);
-        // totalItemsCount.value = arr.length;
-        // this.totalCountStr = `共${arr.length} 筆`;
 
-        //pageNow
-        // arr = arr.slice(skip, top + skip);
-        // items.value = JSON.parse(JSON.stringify(arr));
-
-        // emit("setMarker", arr);
+        emit("setMarker", [...arr]);
       } catch (e) {
         toast.error(`${e.response ? e.response.data : e}`, {
           timeout: 2000,
@@ -267,21 +240,15 @@ export default defineComponent({
       getData();
     };
 
-    watch(offset, (v, pv) => {
-      getData();
-    });
-
-    watch(rows, (v, pv) => {
-      getData();
-    });
-
     const setCenter = (item) => {
       item.needbuild = true;
       emit("setCenterData", item);
     };
 
     const setDestination = (item) => {
-      window.open(`https://www.google.com/maps/dir/${item.診所地址}/`);
+      window.open(
+        `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.Lat},+${item.Long}`
+      );
     };
 
     const optionsLocale = {
@@ -292,8 +259,6 @@ export default defineComponent({
 
     const successLocale = (pos) => {
       const crd = pos.coords;
-
-      // console.log("More or less " + crd.accuracy + " meters.");
 
       const obj = {
         Lat: crd.latitude,
@@ -322,6 +287,10 @@ export default defineComponent({
     };
 
     const errorLocale = (err) => {
+      toast.error(`需同意定位才能找到最近地點`, {
+        timeout: 3000,
+        hideProgressBar: true,
+      });
       console.warn("ERROR(" + err.code + "): " + err.message);
     };
 
@@ -335,8 +304,6 @@ export default defineComponent({
 
     onMounted(async () => {
       await getLocaleData();
-
-      console.log("store.state", store.state);
     });
 
     return {
@@ -353,9 +320,6 @@ export default defineComponent({
       getData,
 
       //paginator
-      offset, //目前在第幾筆
-      rows, //1頁顯示筆數
-      totalItemsCount,
 
       //for search
       selectedZone,
