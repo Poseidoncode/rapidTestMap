@@ -44,6 +44,7 @@
             permanent: ceterdata.Lat == item.Lat && ceterdata.Long == item.Long,
           }"
         >
+          {{ item.showMarker }}
           <p class="mb-2 text-base">
             診所名稱: <b style="color: #013b7d">{{ item.診所名稱 || "" }}</b>
           </p>
@@ -54,11 +55,16 @@
             診所電話: <b style="color: #013b7d">{{ item.診所電話 || "" }}</b>
           </p>
         </l-tooltip>
-        <!-- <l-popup>
-          <p>診所名稱: {{ item.診所名稱 || "" }}</p>
+        <l-popup>
+          <p v-show="showNowMarker">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed
+            pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi. Donec
+            finibus semper metus id malesuada.
+          </p>
+          <p v-show="item.showMarker">診所名稱: {{ item.診所名稱 || "" }}</p>
           <p>診所地址: {{ item.診所地址 || "" }}</p>
           <p>診所電話: {{ item.診所電話 || "" }}</p>
-        </l-popup> -->
+        </l-popup>
       </l-marker>
 
       <!-- <l-marker
@@ -119,119 +125,6 @@
     </l-map>
     <!-- <button @click="changeIcon">New kitten icon</button> -->
   </div>
-  <!-- <section class="main-section px-3">
-    <section class="search-block">
-      <h5 class="big-title">公費COVID-19家用快篩試劑社區定點診所名單</h5>
-      <div class="p-2 search-section">
-        <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">縣市別</span>
-
-          <Dropdown
-            v-model="selectedCity"
-            :options="citiesData"
-            placeholder="請選擇..."
-            style="padding-top: 5px"
-            optionLabel="text"
-            optionValue="value"
-            class="custom-height"
-            @change="setZones"
-          />
-        </div>
-        <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">鄉鎮市區別</span>
-
-          <Dropdown
-            v-model="selectedZone"
-            :options="zones"
-            placeholder="請選擇..."
-            style="padding-top: 5px"
-            optionLabel="text"
-            optionValue="value"
-            class="custom-height"
-            @change="filterItems"
-          />
-        </div>
-        <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">診所名稱</span>
-          <InputText
-            type="text"
-            v-model="selectedClinic"
-            @keydown.enter="filterItems"
-            class="custom-search"
-          />
-        </div>
-        <button
-          class="text-white font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none custom-search"
-          type="button"
-          style="background: #0c69e1"
-          @click="getData"
-        >
-          查詢
-        </button>
-        <button
-          class="text-white font-bold uppercase text-base px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none custom-search"
-          type="button"
-          style="background: #6a9f3e"
-          @click="clearSearch"
-        >
-          清除
-        </button>
-      </div>
-    </section>
-
-    <header class="ecommerce-grid my-dark">
-      <div v-for="(item, i) in headers" :key="`headers${i}`" class="header">
-        {{ item.name }}
-      </div>
-    </header>
-    <main
-      class="ecommerce-grid"
-      v-for="(item, idx) in items"
-      :key="`content${idx}`"
-      style="color: #39312e"
-      :style="
-        idx % 2 == 0
-          ? 'background-color:#ffffff ;'
-          : 'background-color:#e7f2f3;'
-      "
-    >
-      <div class="content" style="cursor: pointer; padding-top: 3px">
-        <button
-          class="text-white font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-2 mb-1 text-sm"
-          type="button"
-          style="background: #0d4a9e"
-        >
-          地圖
-        </button>
-      </div>
-
-      <div class="content" :title="item.縣市別">
-        {{ item?.縣市別 || "" }}
-      </div>
-      <div class="content" :title="item.鄉鎮市區別">
-        {{ item?.鄉鎮市區別 || "" }}
-      </div>
-      <div class="content" :title="item.診所名稱">
-        {{ item?.診所名稱 || "" }}
-      </div>
-    </main>
-    <main
-      v-if="!items.length"
-      class="mt-2 text-center text-xl font-semibold col-span-full"
-      style="font-family: Microsoft JhengHei, Helvetica"
-    >
-      No Data
-    </main>
-    <footer class="grid grid-flow-col auto-cols-max justify-center">
-      <Paginator
-        v-model:first="offset"
-        v-model:rows="rows"
-        :totalRecords="totalItemsCount"
-        :rowsPerPageOptions="[5, 10, 50]"
-      ></Paginator>
-      <div class="mt-4">共{{ totalItemsCount }}筆</div>
-    </footer>
-  </section> -->
 </template>
 
 <script>
@@ -271,6 +164,7 @@ export default defineComponent({
     sidebar,
   },
   setup() {
+    const showNowMarker = ref(false);
     const store = useStore();
     const componentsKey = ref(0);
     //map
@@ -294,10 +188,18 @@ export default defineComponent({
       ceterdata.value.Lat = data.Lat;
       ceterdata.value.Long = data.Long;
       zoom.value = 16;
-      if (data.needbuild) {
-        componentsKey.value += 1;
+
+      const index = allMarkers.value.findIndex((s) => s.Lat === data.Lat);
+      console.log("index", index);
+      if (index > -1) {
+        allMarkers.value[index].showMarker = true;
+        console.log("allMarkers", allMarkers.value);
+        showNowMarker.value = true;
       }
-      //
+
+      // if (data.needbuild) {
+      //   componentsKey.value += 1;
+      // }
     };
 
     const userLat = computed(() => {
@@ -319,7 +221,7 @@ export default defineComponent({
       userLat,
       userLong,
 
-      componentsKey,
+      showNowMarker,
     };
   },
 });

@@ -90,7 +90,7 @@
             <p class="font-normal text-gray-700 mb-3 dark:text-gray-400">
               電話: {{ item.診所電話 || "" }}
             </p>
-            <span
+            <a
               href="#"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               @click.prevent="setCenter(item)"
@@ -108,9 +108,9 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-            </span>
+            </a>
 
-            <span
+            <a
               href="#"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-3"
               @click.prevent="setDestination(item)"
@@ -128,7 +128,7 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-            </span>
+            </a>
           </div>
         </div>
       </div>
@@ -211,6 +211,10 @@ export default defineComponent({
         }
 
         const res = await getMapLists(qs);
+        let arr = res.data?.result?.records.map((s) => {
+          s.showMarker = false;
+          return s;
+        });
         items.value = [...res.data?.result?.records];
         emit("setMarker", [...res.data?.result?.records]);
         // console.log("items.value", items.value);
