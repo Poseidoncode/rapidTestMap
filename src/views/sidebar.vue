@@ -15,23 +15,6 @@
       <h3 class="text-xl font-medium text-gray-700 mb-1">
         COVID-19家用快篩試劑定點診所名單
       </h3>
-
-      <!-- <button
-        @click="cartOpen = !cartOpen"
-        class="text-gray-600 focus:outline-none"
-      >
-        <svg
-          class="h-5 w-5"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button> -->
     </div>
     <div class="p-inputgroup mb-1">
       <span class="p-inputgroup-addon">縣市別</span>
