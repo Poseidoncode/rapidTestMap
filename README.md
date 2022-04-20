@@ -16,7 +16,7 @@
 
 - 作品截圖
 
-<!--   ![image](https://github.com/Poseidoncode/collection-TainanTravelMap/blob/gh-pages/screen.PNG) -->
+  ![image](https://github.com/Poseidoncode/rapidTestMap/blob/main/public/assets/mapimg.png?raw=true)
 
 
 - 資料來源
