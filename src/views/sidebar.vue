@@ -56,7 +56,7 @@
         optionLabel="text"
         optionValue="value"
         class="custom-height"
-        @change="filterItems"
+        @change="getData"
         :showClear="true"
       />
     </div>
@@ -65,7 +65,7 @@
       <InputText
         type="text"
         v-model="selectedClinic"
-        @keydown.enter="filterItems"
+        @keydown.enter="getData"
         class="custom-search"
       />
     </div>
@@ -165,41 +165,12 @@ export default defineComponent({
     ]);
 
     const items = ref([]);
-    const allItems = ref([]);
 
     const offset = ref(0);
     const rows = ref(10);
     const totalItemsCount = ref(1);
 
     const toast = useToast();
-
-    const filterItems = () => {
-      //top & skip
-      // const page = +offset.value / +rows.value + +1;
-      // const skip = (page - 1) * rows.value;
-      // const top = rows.value;
-
-      //search Filter
-      let arr = JSON.parse(JSON.stringify(allItems.value));
-      if (selectedCity.value) {
-        arr = arr.filter((s) => `${s.縣市別}` == selectedCity.value);
-      }
-      if (selectedZone.value) {
-        arr = arr.filter((s) => `${s.鄉鎮市區別}` == selectedZone.value);
-      }
-      if (selectedClinic.value) {
-        arr = arr.filter((s) => `${s.診所名稱}`.includes(selectedClinic.value));
-      }
-
-      totalItemsCount.value = arr.length;
-      // this.totalCountStr = `共${arr.length} 筆`;
-
-      //pageNow
-      // arr = arr.slice(skip, top + skip);
-      items.value = JSON.parse(JSON.stringify(arr));
-
-      emit("setMarker", arr);
-    };
 
     const getData = async () => {
       try {
@@ -215,12 +186,42 @@ export default defineComponent({
 
         //top:筆數、skip:跳過幾筆
 
-        const res = await getMapLists();
+        //
 
-        // items.value = [...res.data?.result?.records];
-        allItems.value = [...res.data?.result?.records];
-        totalItemsCount.value = res.data?.result?.total || 0;
-        filterItems();
+        let hasQsed = false;
+        let qs = "";
+
+        if (selectedCity.value) {
+          qs = qs + `縣市別 LIKE '${selectedCity.value}'`;
+          hasQsed = true;
+        }
+        if (selectedZone.value) {
+          if (hasQsed) {
+            qs = qs + `And 鄉鎮市區別 LIKE '${selectedZone.value}'`;
+          } else {
+            qs = qs + `鄉鎮市區別 LIKE '${selectedZone.value}'`;
+          }
+        }
+        if (selectedClinic.value) {
+          if (hasQsed) {
+            qs = qs + `And 診所名稱 LIKE '${selectedClinic.value}'`;
+          } else {
+            qs = qs + `診所名稱 LIKE '${selectedClinic.value}'`;
+          }
+        }
+
+        const res = await getMapLists(qs);
+        items.value = [...res.data?.result?.records];
+        emit("setMarker", [...res.data?.result?.records]);
+        // console.log("items.value", items.value);
+        // totalItemsCount.value = arr.length;
+        // this.totalCountStr = `共${arr.length} 筆`;
+
+        //pageNow
+        // arr = arr.slice(skip, top + skip);
+        // items.value = JSON.parse(JSON.stringify(arr));
+
+        // emit("setMarker", arr);
       } catch (e) {
         toast.error(`${e.response ? e.response.data : e}`, {
           timeout: 2000,
@@ -247,7 +248,7 @@ export default defineComponent({
         zones.value = null;
       }
       selectedZone.value = null;
-      filterItems();
+      getData();
     };
 
     //for search
@@ -263,11 +264,11 @@ export default defineComponent({
     };
 
     watch(offset, (v, pv) => {
-      filterItems();
+      getData();
     });
 
     watch(rows, (v, pv) => {
-      filterItems();
+      getData();
     });
 
     const setCenter = (item) => {
@@ -309,8 +310,8 @@ export default defineComponent({
       });
 
       selectedCity.value = zoneArr[0].text;
-
-      console.log("zoneArr", zoneArr);
+      getData();
+      setZones();
 
       emit("setCenterData", obj);
       store.commit("m_setUserLocale", obj);
@@ -329,8 +330,8 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      await getData();
       await getLocaleData();
+
       console.log("store.state", store.state);
     });
 
@@ -340,13 +341,12 @@ export default defineComponent({
       zonesData,
       headers,
       items,
-      allItems,
+
       toast,
       zones,
       setZones,
       //list data Function
       getData,
-      filterItems,
 
       //paginator
       offset, //目前在第幾筆
