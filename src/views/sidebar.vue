@@ -80,6 +80,7 @@
             <a href="#">
               <h5
                 class="text-gray-900 font-bold text-2xl tracking-tight mb-2 dark:text-white"
+                @click.prevent="setCenter(item)"
               >
                 {{ item.診所名稱 || "" }}
               </h5>

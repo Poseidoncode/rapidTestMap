@@ -18,9 +18,7 @@
           icon-url="https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png"
           :icon-size="[25, 41]"
         />
-        <!-- <l-popup>
-          <p>目前位置</p>
-        </l-popup> -->
+
         <l-tooltip
           :options="{
             permanent: true,
@@ -39,20 +37,37 @@
           :icon-size="[50, 55]"
         />
         <l-tooltip>
-          <p class="mb-2 text-base">
+          <p class="mb-2" style="font-size: 16px">
             診所名稱: <b style="color: #013b7d">{{ item.診所名稱 || "" }}</b>
           </p>
-          <p class="mb-2 text-base">
+          <p class="mb-2" style="font-size: 16px">
             診所地址: <b style="color: #013b7d">{{ item.診所地址 || "" }}</b>
           </p>
-          <p class="mb-2 text-base">
+          <p class="mb-2" style="font-size: 16px">
             診所電話: <b style="color: #013b7d">{{ item.診所電話 || "" }}</b>
           </p>
         </l-tooltip>
         <l-popup>
-          <p>診所名稱: {{ item.診所名稱 || "" }}</p>
+          <button
+            type="button"
+            class="border border-indigo-500 text-indigo-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-indigo-600 focus:outline-none focus:shadow-outline ml-0"
+            @click.prevent="setDestination(item)"
+          >
+            Google導航
+          </button>
+          <!-- <p style="margin-top: 8px">診所名稱: {{ item.診所名稱 || "" }}</p>
           <p>診所地址: {{ item.診所地址 || "" }}</p>
-          <p>診所電話: {{ item.診所電話 || "" }}</p>
+          <p>診所電話: {{ item.診所電話 || "" }}</p> -->
+
+          <p class="mb-2" style="margin-top: 8px; font-size: 16px">
+            診所名稱: <b style="color: #013b7d">{{ item.診所名稱 || "" }}</b>
+          </p>
+          <p class="mb-2" style="font-size: 16px">
+            診所地址: <b style="color: #013b7d">{{ item.診所地址 || "" }}</b>
+          </p>
+          <p class="mb-2" style="font-size: 16px">
+            診所電話: <b style="color: #013b7d">{{ item.診所電話 || "" }}</b>
+          </p>
         </l-popup>
       </l-marker>
     </l-map>
@@ -129,11 +144,18 @@ export default defineComponent({
       return store.state.user.locale?.Long;
     });
 
+    const setDestination = (item) => {
+      window.open(
+        `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.診所地址}`
+      );
+    };
+
     return {
       ceterdata,
       allMarkers,
       setMarker,
       setCenterData,
+      setDestination,
       zoom,
       log,
 
@@ -192,7 +214,7 @@ export default defineComponent({
     text-overflow: ellipsis;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    font-size: 15px;
+    font-size: 16px;
     padding: 4px 0;
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
