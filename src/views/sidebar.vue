@@ -5,6 +5,9 @@
   <div class="close-icon" v-show="cartOpen" @click="cartOpen = !cartOpen">
     <i class="pi pi-angle-right" style="font-size: 2rem"></i>
   </div>
+  <div class="totop-icon" v-show="cartOpen" @click="scrollToTop">
+    <i class="pi pi-angle-up" style="font-size: 2rem"></i>
+  </div>
 
   <div
     :class="cartOpen ? 'translate-x-0 ease-out' : 'translate-x-full ease-in'"
@@ -13,7 +16,7 @@
     @scroll="scrollEvent"
   >
     <div class="flex items-center justify-between">
-      <h3 class="text-xl font-medium text-gray-700 mb-1">
+      <h3 class="text-xl font-medium text-gray-700 mb-1" id="bigtitle">
         COVID-19家用快篩試劑定點診所名單
       </h3>
     </div>
@@ -326,8 +329,16 @@ export default defineComponent({
       console.log("scrollEvent", window);
     };
 
+    const scrollToTop = () => {
+      // window.scrollTo(0, 0);
+      document
+        .getElementById("bigtitle")
+        .scrollIntoView({ behavior: "smooth" });
+    };
+
     return {
       scrollEvent,
+      scrollToTop,
       //for list data variable
       citiesData,
       zonesData,
@@ -375,6 +386,19 @@ export default defineComponent({
   border-radius: 50%;
   display: flex;
   justify-content: center;
+}
+.totop-icon {
+  position: fixed;
+  z-index: 1500;
+  right: 41px;
+
+  cursor: pointer;
+  color: #fff;
+  background: #f5c664;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  bottom: 30px;
 }
 
 .p-inputgroup-addon {
