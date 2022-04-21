@@ -16,7 +16,10 @@
     @scroll="scrollEvent"
   >
     <div class="flex items-center justify-between">
-      <h3 class="text-xl font-medium text-gray-700 mb-1" id="bigtitle">
+      <h3
+        class="font-extrabold text-gray-700 mb-1 sm:text-xs md:text-xl"
+        id="bigtitle"
+      >
         COVID-19家用快篩試劑定點診所名單
       </h3>
     </div>
@@ -388,6 +391,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
 }
+
 .totop-icon {
   position: fixed;
   z-index: 1500;
@@ -414,6 +418,10 @@ export default defineComponent({
 @media screen and (max-width: 500px) {
   .hide-item {
     display: none !important;
+  }
+  .open-icon,
+  .close-icon {
+    top: 29px !important;
   }
 }
 </style>
