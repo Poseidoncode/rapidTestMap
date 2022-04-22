@@ -263,10 +263,17 @@ export default defineComponent({
       emit("setCenterData", item);
     };
 
-    const setDestination = (item) => {
-      window.open(
-        `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.診所地址}`
-      );
+    const setDestination = async (item) => {
+      if (Boolean(store.state.user.locale?.Lat)) {
+        window.open(
+          `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.診所地址}`
+        );
+      } else {
+        await getLocaleData();
+        window.open(
+          `https://www.google.com/maps/dir/${store.state.user.locale?.Lat},+${store.state.user.locale?.Long}/${item.診所地址}`
+        );
+      }
     };
 
     const searchDestination = (item) => {
@@ -288,6 +295,8 @@ export default defineComponent({
         Lat: crd.latitude,
         Long: crd.longitude,
       };
+
+      sessionStorage.setItem("localeData", JSON.stringify(obj));
 
       let zoneArr = zonesData.map((s) => {
         s.latDifference = Math.abs(+crd.latitude - +s.lat);
@@ -318,11 +327,40 @@ export default defineComponent({
     };
 
     const getLocaleData = () => {
-      navigator.geolocation.getCurrentPosition(
-        successLocale,
-        errorLocale,
-        optionsLocale
-      );
+      const localeData = sessionStorage.getItem("localeData")
+        ? JSON.parse(sessionStorage.getItem("localeData"))
+        : "";
+
+      if (!Boolean(localeData)) {
+        navigator.geolocation.getCurrentPosition(
+          successLocale,
+          errorLocale,
+          optionsLocale
+        );
+      } else {
+        const obj = {
+          ...localeData,
+        };
+
+        let zoneArr = zonesData.map((s) => {
+          s.latDifference = Math.abs(+localeData.Lat - +s.lat);
+          s.lngDifference = Math.abs(+localeData.Long - +s.lng);
+          s.differenceTotal =
+            Math.abs(+localeData.Lat - +s.lat) +
+            Math.abs(+localeData.Long - +s.lng);
+          return s;
+        });
+
+        zoneArr.sort((a, b) => {
+          return a.differenceTotal - b.differenceTotal;
+        });
+
+        selectedCity.value = zoneArr[0].text;
+
+        setZones();
+        emit("setCenterData", obj);
+        store.commit("m_setUserLocale", localeData);
+      }
     };
 
     onMounted(async () => {

@@ -50,10 +50,22 @@
         <l-popup>
           <button
             type="button"
-            class="border border-indigo-500 text-indigo-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-indigo-600 focus:outline-none focus:shadow-outline ml-0"
+            class="border border-indigo-500 text-indigo-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-indigo-600 focus:outline-none focus:shadow-outline ml-0 flex"
             @click.prevent="setDestination(item)"
           >
             Google導航
+            <svg
+              class="-mr-1 ml-2 h-4 w-4"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
           </button>
           <!-- <p style="margin-top: 8px">診所名稱: {{ item.診所名稱 || "" }}</p>
           <p>診所地址: {{ item.診所地址 || "" }}</p>
