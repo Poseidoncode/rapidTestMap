@@ -15,11 +15,8 @@
     style="z-index: 1000"
     @scroll="scrollEvent"
   >
-    <div class="flex items-center justify-between">
-      <h3
-        class="font-extrabold text-gray-700 mb-1 sm:text-xs md:text-xl"
-        id="bigtitle"
-      >
+    <div class="flex items-center justify-between" id="bigtitle">
+      <h3 class="font-extrabold text-gray-700 mb-1 sm:text-xs md:text-xl">
         COVID-19家用快篩試劑定點診所名單
       </h3>
     </div>
@@ -53,7 +50,7 @@
         :showClear="true"
       />
     </div>
-    <div class="p-inputgroup">
+    <div class="p-inputgroup mb-2">
       <span class="p-inputgroup-addon">診所名稱</span>
       <InputText
         type="text"
@@ -62,6 +59,16 @@
         class="custom-search"
       />
     </div>
+    <div class="flex justify-end">
+      <button
+        type="button"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-3 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        @click="clearSearch"
+      >
+        清除搜尋條件
+      </button>
+    </div>
+
     <hr class="my-3" />
 
     <div v-for="(item, i) in items" :key="`headers${i}`" class="mt-2">
