@@ -33,6 +33,7 @@
         class="custom-height"
         @change="setZones"
         :showClear="true"
+        :filter="true"
       />
     </div>
     <div class="p-inputgroup mb-1">
@@ -48,6 +49,7 @@
         class="custom-height"
         @change="getData"
         :showClear="true"
+        :filter="true"
       />
     </div>
     <div class="p-inputgroup mb-2">
