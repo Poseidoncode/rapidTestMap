@@ -8,10 +8,18 @@ const routes = [
     name: "home",
     meta: {
       title: "home page",
-      needNav: true,
     },
     // redirect: "/home",
     component: () => import("@/views/products.vue"),
+  },
+  {
+    path: "/test",
+    name: "test",
+    meta: {
+      title: "test page",
+    },
+    // redirect: "/home",
+    component: () => import("@/views/test.vue"),
   },
 ];
 
