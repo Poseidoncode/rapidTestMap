@@ -1,0 +1,1 @@
+import{_ as o}from"./index.b413ff94.js";import{C as t,H as n,o as a,K as r}from"./vendor.d0acc386.js";const c=t({props:{},setup(e,{emit:s}){return{}}}),i={class:"main-section"},p=r("h1",null,"This is an about page123",-1),_=[p];function d(e,s,f,m,u,l){return a(),n("div",i,_)}var $=o(c,[["render",d]]);export{$ as default};
