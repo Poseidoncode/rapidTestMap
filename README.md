@@ -1,6 +1,9 @@
-# 
-# [RESTful API] 公費COVID-19家用快篩試劑社區定點診所名單
+# 公費COVID-19家用快篩試劑社區定點診所名單
 
+- 作品截圖
+
+  ![image](https://github.com/Poseidoncode/rapidTestMap/blob/main/public/assets/mapimg.png?raw=true)
+  
 - 說明
 
   使用 Leaflet + OpenStreetMap 地圖應用做開發，結合台南市政府的開放資料，使想去台南旅遊的遊客能快速找到最適合的資訊。
@@ -12,11 +15,6 @@
 - GitHub Pages
 
   https://poseidoncode.github.io/rapidTestMap/#/
-  
-
-- 作品截圖
-
-  ![image](https://github.com/Poseidoncode/rapidTestMap/blob/main/public/assets/mapimg.png?raw=true)
 
 
 - 資料來源
