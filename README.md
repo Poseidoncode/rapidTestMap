@@ -1,6 +1,6 @@
 # 公費COVID-19家用快篩試劑社區定點診所名單
 
-- 作品截圖
+> COVID-19家用快篩試劑地圖
 
   ![image](https://github.com/Poseidoncode/rapidTestMap/blob/main/public/assets/mapimg.png?raw=true)
   
