@@ -6,7 +6,7 @@
   
 - 說明
 
-  使用 Leaflet + OpenStreetMap 地圖應用做開發，結合衛生福利部的API資料，使使用者能快速找到快篩試劑。
+  使用 Leaflet + OpenStreetMap 地圖應用做開發，結合衛生福利部的API資料，使用者能快速找到快篩試劑。
 
 - 技術
 
@@ -16,6 +16,9 @@
 
   https://poseidoncode.github.io/rapidTestMap/#/
 
+- 備註
+
+  由於目前衛生福利部疾病管制署已將此API移除，因此目前只能透過截圖看到原本畫面
 
 - 資料來源
 
